@@ -5,7 +5,7 @@ bushfire attack level (BAL)
 ===============================================================
 
 This module includes algorithms that are used to calculate BAL as per
-Method 1 in the Australian Standard AS 3959 (2009) -- Construction of
+Method 1 in the Australian Standard AS 3959:2018 -- Construction of
 buildings in bushfire-prone areas.
 
 :moduleauthor: Tina Yang <tina.yang@ga.gov.au>
@@ -21,7 +21,7 @@ from utilities import value_lookup, bal_database
 def bal_cal(veg_class, slope, aspect, fdi):
     """
     Calculate the BAL based on the classified vegetation and the combined
-    slope and vegetation according to an appropriate table in AS 3959 (2009)
+    slope and vegetation according to an appropriate table in AS 3959:2018
     to determine the bushfire attack level (BAL).
 
     :param veg_class: `file` the input classified vegetation
@@ -259,39 +259,27 @@ def bal_esti(veg, dist, slope, fdi):
              the POI
     """
 
-    # nodata area
-    if slope == -99:
-        bal = -99
+    if fdi not in bal_database.FDI:
+        raise ValueError('FDI must be 100, 80, 50 or 40')
+    if not np.isfinite(dist) or dist < 0:
+        raise ValueError('Distance must be finite and non-negative')
+    if veg == -99 or slope == -99:
+        return bal_database.NODATA
+    if veg not in [0] + bal_database.VEG_CLASS:
+        raise ValueError('Vegetation must be 0 (excluded) or a class from 1 to 8')
+    if veg == 8 and fdi != 50:
+        raise ValueError('Tussock moorland is only tabulated for FDI 50')
+    if slope not in [-1] + bal_database.SLOPE:
+        raise ValueError('Slope must be a classified slope code (-1 or 1 to 6)')
 
-    # downslope > 20 degree
-    elif slope == bal_database.SLOPE[5]:
-        if veg == -99:
-            bal = -99
-        else:
-            bal = 200
-
-    # flat land (0 degree) or upslopes
-    elif slope in [-1, bal_database.SLOPE[0]]:
-        if veg == -99:
-            bal = -99
-        else:
-            d_limit = bal_database.DIST_LIMIT_UPSLOPE[fdi][veg]
-            dist_class = find_dist_class(dist, d_limit)
-            bal = bal_database.BAL_CLASS[dist_class]
-
-    # 0 < downslope <= 20 degree
+    # Assessed exclusions contribute BAL-LOW, not missing data. Grassland
+    # ends at 50 m for every FDI; tussock moorland retains its 100 m range.
+    if veg == 0 or dist >= 100 or (veg == 7 and dist >= 50):
+        return bal_database.BAL_LOW
+    if slope == bal_database.SLOPE[5]:
+        return bal_database.METHOD_1_UNSUPPORTED
+    if slope in [-1, bal_database.SLOPE[0]]:
+        d_limit = bal_database.DIST_LIMIT_UPSLOPE[fdi][veg]
     else:
-        if veg == -99:
-            bal = -99
-        else:
-            d_limit = bal_database.DIST_LIMIT_DOWNSLOPE[fdi][(slope, veg)]
-            dist_class = find_dist_class(dist, d_limit)
-            bal = bal_database.BAL_CLASS[dist_class]
-
-    # if fdi is not 50, if it is grassland, distance is consdiered up to 50m,
-    # update bal to nodata
-    if fdi != 50 and veg == bal_database.VEG_CLASS[6]:
-        if dist >= 50:
-            bal = -99
-
-    return bal
+        d_limit = bal_database.DIST_LIMIT_DOWNSLOPE[fdi][(slope, veg)]
+    return bal_database.BAL_CLASS[find_dist_class(dist, d_limit)]

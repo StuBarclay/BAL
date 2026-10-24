@@ -1,3 +1,8 @@
+.. warning::
+
+   Historical AS 3959:2009 material. For version 3.0 inputs and outputs,
+   read :doc:`/userguide/as3959_2018` before using these examples.
+
 .. _data_requirements:
 
 Data requirements

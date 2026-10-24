@@ -53,6 +53,10 @@ class TestDISTLIMIT(unittest.TestCase):
                             (5, 5): [9, 13, 20, 29], (5, 6): [18, 25, 36, 48],
                             (5, 7): [10, 14, 21, 30]}
 
+        from utilities.bal_database import VEG_CLASS
+        self.assertEqual(VEG_CLASS, list(range(1, 9)))
+        self.assertEqual(DIST_LIMIT_UPSLOPE[50][7], [5, 6, 10, 14])
+        self.assertEqual(DIST_LIMIT_UPSLOPE[50][8], [7, 9, 14, 20])
         self.assertEqual(others_80, expect_others)
         self.assertEqual(downslope_80, expect_downslope)
 

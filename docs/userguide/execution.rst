@@ -1,3 +1,8 @@
+.. warning::
+
+   Historical AS 3959:2009 material. For version 3.0 inputs and outputs,
+   read :doc:`/userguide/as3959_2018` before using these examples.
+
 .. |beta|   unicode:: U+003B2 .. GREEK SMALL LETTER BETA
 
 .. _execution:

@@ -83,6 +83,20 @@ class TestBalEsti(unittest.TestCase):
                          200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200,
                          200, 200, 200, 200, 200, 200, 200]
 
+        # 2018: class G is grassland; the former FDI 50 class G rows
+        # described tussock moorland. Explicit expected values at the four
+        # sample distances for each slope code (-99, -1, 1, 2, 3, 4, 5, 6).
+        grass_50 = [[-99, -99, -99, -99], [19, 12.5, 0, 0],
+                    [19, 12.5, 0, 0], [19, 12.5, 0, 0],
+                    [29, 12.5, 0, 0], [29, 12.5, 0, 0],
+                    [29, 12.5, 0, 0], [200, 200, 0, 0]]
+        for slope_index, slope in enumerate(slope_list):
+            for distance_index in range(4):
+                index = slope_index * 32 + 28 + distance_index
+                if slope != -99 and distance_index >= 2:
+                    result_expect[index] = 0
+                result_expect[256 + index] = grass_50[slope_index][distance_index]
+
         result = []
 
         for fdi in fdi_list:

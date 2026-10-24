@@ -4,8 +4,8 @@ bushfire attack level (BAL)
 
 ===============================================================
 
-These dictionaries are translated from tables from 2.4.2 to 2.4.5 in 
-AS 3959 (2009) to determine the BAL for an area of interest within Australia.
+These dictionaries are translated from Tables 2.4 to 2.7 in
+AS 3959:2018 to determine the BAL for an area of interest within Australia.
 
 :moduleauthor: Tina Yang <tina.yang@ga.gov.au>
 
@@ -14,8 +14,13 @@ AS 3959 (2009) to determine the BAL for an area of interest within Australia.
 FDI = [100, 80, 50, 40]
 
 # 1: Forest, 2: Woodland, 3: Shrubland, 4: Scrub, 5: Mallee/Mulga
-# 6: Rainforest, 7: Grassland/Tussock moorland
-VEG_CLASS =  [1, 2, 3, 4, 5, 6, 7]
+# 6: Rainforest, 7: Grassland, 8: Tussock moorland (FDI 50 only)
+# 0 is reserved for assessed low-threat/non-vegetated exclusions.
+VEG_CLASS = [1, 2, 3, 4, 5, 6, 7, 8]
+STANDARD = "AS 3959:2018"
+NODATA = -99
+BAL_LOW = 0
+METHOD_1_UNSUPPORTED = 200
 
 # 1: 0, 2: 0 ~ 5, 3: 5 ~ 10, 4: 10 ~ 15, 5: 15 ~ 20, 6: > 20
 SLOPE = [1, 2, 3, 4, 5, 6]
@@ -41,7 +46,8 @@ DIST_LIMIT_UPSLOPE = dict([(FDI[0], dict([(VEG_CLASS[0], [19, 25, 35, 48]),
                                           (VEG_CLASS[3], [10, 13, 19, 27]),
                                           (VEG_CLASS[4], [6, 8, 12, 17]),
                                           (VEG_CLASS[5], [5, 6, 9, 14]),
-                                          (VEG_CLASS[6], [7, 9, 14, 20])])),
+                                          (VEG_CLASS[6], [5, 6, 10, 14]),
+                                          (VEG_CLASS[7], [7, 9, 14, 20])])),
                             (FDI[3], dict([(VEG_CLASS[0], [10, 13, 20, 28]),
                                           (VEG_CLASS[1], [6, 9, 13, 19]),
                                           (VEG_CLASS[2], [7, 9, 13, 19]),
@@ -118,28 +124,32 @@ DIST_LIMIT_DOWNSLOPE = dict([(FDI[0],
                                   ((SLOPE[1], VEG_CLASS[3]), [11, 15, 22, 31]),
                                   ((SLOPE[1], VEG_CLASS[4]), [7, 9, 13, 20]),
                                   ((SLOPE[1], VEG_CLASS[5]), [6, 8, 12, 17]),
-                                  ((SLOPE[1], VEG_CLASS[6]), [8, 10, 16, 23]),
+                                  ((SLOPE[1], VEG_CLASS[6]), [5, 7, 11, 16]),
+                                  ((SLOPE[1], VEG_CLASS[7]), [8, 10, 16, 23]),
                                   ((SLOPE[2], VEG_CLASS[0]), [18, 24, 34, 46]),
                                   ((SLOPE[2], VEG_CLASS[1]), [11, 15, 23, 32]),
                                   ((SLOPE[2], VEG_CLASS[2]), [8, 11, 17, 25]),
                                   ((SLOPE[2], VEG_CLASS[3]), [12, 17, 24, 35]),
                                   ((SLOPE[2], VEG_CLASS[4]), [7, 10, 15, 23]),
                                   ((SLOPE[2], VEG_CLASS[5]), [7, 10, 15, 22]),
-                                  ((SLOPE[2], VEG_CLASS[6]), [9, 12, 18, 26]),
+                                  ((SLOPE[2], VEG_CLASS[6]), [6, 8, 13, 19]),
+                                  ((SLOPE[2], VEG_CLASS[7]), [9, 12, 18, 26]),
                                   ((SLOPE[3], VEG_CLASS[0]), [22, 30, 41, 56]),
                                   ((SLOPE[3], VEG_CLASS[1]), [14, 19, 28, 40]),
                                   ((SLOPE[3], VEG_CLASS[2]), [9, 13, 19, 28]),
                                   ((SLOPE[3], VEG_CLASS[3]), [14, 19, 28, 39]),
                                   ((SLOPE[3], VEG_CLASS[4]), [8, 11, 18, 26]),
                                   ((SLOPE[3], VEG_CLASS[5]), [9, 13, 19, 28]),
-                                  ((SLOPE[3], VEG_CLASS[6]), [10, 13, 20, 29]),
+                                  ((SLOPE[3], VEG_CLASS[6]), [7, 10, 15, 22]),
+                                  ((SLOPE[3], VEG_CLASS[7]), [10, 13, 20, 29]),
                                   ((SLOPE[4], VEG_CLASS[0]), [28, 37, 51, 67]),
                                   ((SLOPE[4], VEG_CLASS[1]), [18, 25, 36, 48]),
                                   ((SLOPE[4], VEG_CLASS[2]), [10, 15, 22, 31]),
                                   ((SLOPE[4], VEG_CLASS[3]), [15, 21, 31, 43]),
                                   ((SLOPE[4], VEG_CLASS[4]), [9, 13, 20, 29]),
                                   ((SLOPE[4], VEG_CLASS[5]), [12, 17, 25, 35]),
-                                  ((SLOPE[4], VEG_CLASS[6]), [11, 15, 23, 33])
+                                  ((SLOPE[4], VEG_CLASS[6]), [8, 11, 17, 25]),
+                                  ((SLOPE[4], VEG_CLASS[7]), [11, 15, 23, 33])
                                   ])),
                              (FDI[3],
                             dict([((SLOPE[1], VEG_CLASS[0]), [12, 16, 24, 34]),
@@ -182,3 +192,6 @@ BAL_CLASS = dict([(DIST_CLASS[0], 100),
                   (DIST_CLASS[3], 19),
                   (DIST_CLASS[4], 12.5)
                   ])
+
+# Verification source: published AS 3959:2018, Tables 2.4-2.7.
+# https://webstore.ansi.org/preview-pages/SAI/preview_00-3262822250-primary.pdf

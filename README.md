@@ -4,8 +4,27 @@ The Bushfire Attack Level Computation Software
 This software is an ESRI ArcGIS 10.2 toolbox used to produce Bushfire
 Attack Level (BAL), a measure of the severity of a building's
 potential exposure to bushfire. The algorithm is based on Method 1 in
-Australian Standard AS 3959 (2009)--*Construction of buildings in
+Australian Standard AS 3959:2018--*Construction of buildings in
 bushfire-prone areas*.
+
+AS 3959:2018 migration
+---------------------
+
+Version 3.0 updates Method 1 lookup tables to Tables 2.4-2.7 of
+AS 3959:2018. See [the migration guide](docs/userguide/as3959_2018.rst)
+before reusing existing vegetation data or comparing previous outputs.
+
+Vegetation codes 1-6 are retained. Code 7 now means **grassland only**;
+code 8 means **tussock moorland**, tabulated at FDI 50 only. Code 0
+represents assessed vegetation exclusions. FDI 50 grassland distances
+have changed. Grassland is assessed within 50 m for every FDI;
+tussock moorland retains the 100 m assessment range.
+
+Output 0 means BAL-LOW; -99 remains NoData; 100 means BAL-FZ;
+200 flags slopes outside Method 1. This remains a spatial approximation:
+vegetation classification, exclusions and effective slope need site review.
+The existing binary ArcGIS toolbox is retained; its embedded help and the
+older training material describe the historical 2009 workflow.
 
 Dependencies 
 ------------

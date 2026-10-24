@@ -4,7 +4,7 @@
 
 This module is used to produce the bushfire attack level (BAL) for an area of
 interest within Australia based on input vegetation and elevation datasets
-as per Method 1 in the Australian Standard AS 3959 (2009) -- Construction of
+as per Method 1 in the Australian Standard AS 3959:2018 -- Construction of
 buildings in bushfire-prone areas.
 
 :moduleauthor: Tina Yang <tina.yang@ga.gov.au>
@@ -20,13 +20,13 @@ import arcpy
 from calculate_bal import bal_cal
 from utilities.sa_tools import extract_by_mask, reclassify, cal_slope_aspect
 
-__version__ = '2.1'
+__version__ = '3.0'
 
 
 def reclass_veg(veg, dem, output_folder, remap, mask):
     """
     Reclassify the original vegetation into the categories classified as Table
-    2.3 in AS 3959 (2009).
+    2.3 in AS 3959:2018.
 
     :param veg: `file` the input vegetation
     :param dem: `file` the input dem used as reference projection
@@ -46,7 +46,7 @@ def reclass_veg(veg, dem, output_folder, remap, mask):
     veg_r_proj = pjoin(input_folder, 'veg_r_pj')
     veg_class_r = pjoin(output_folder, 'veg_r')
 
-    arcpy.AddMessage('Remap the vegetation into classes of 1 ~ 7 ...')
+    arcpy.AddMessage('Remap the vegetation into classes of 0 ~ 8 (0 = excluded vegetation) ...')
 
     # Derive reclassifed veg...
     reclassify(veg, remap, veg_r_init)
@@ -212,6 +212,14 @@ def bal_calc(vegetation, dem, fdi, output_folder, remap, mask):
     """
     arcpy.env.overwriteOutput = True
 
+    if fdi not in [100, 80, 50, 40]:
+        raise ValueError('FDI must be 100, 80, 50 or 40')
+    arcpy.AddMessage('AS 3959:2018 Method 1 lookup tables (2.4 to 2.7)')
+    arcpy.AddWarning('Review vegetation remapping for AS 3959:2018: '
+                     '7 = grassland; 8 = tussock moorland (FDI 50 only); '
+                     '0 = assessed exclusions. DEM slopes and eight-direction '
+                     'sampling remain a spatial approximation. '
+                     'Output 200 requires assessment outside Method 1.')
     arcpy.AddMessage('Reclassify the vegetation map ...   ')
     veg_class = reclass_veg(vegetation, dem, output_folder, remap, mask)
 

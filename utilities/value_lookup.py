@@ -5,7 +5,7 @@ bushfire attack level (BAL)
 ===============================================================
 
 These dictionaries are helpful to adapt the algorithm spatially to Method 1 
-in AS 3959 (2009).
+in AS 3959:2018.
 
 :moduleauthor: Tina Yang <tina.yang@ga.gov.au>
 

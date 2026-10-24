@@ -1,0 +1,68 @@
+.. warning::
+
+   Historical AS 3959:2009 material. For version 3.0 inputs and outputs,
+   read :doc:`/userguide/as3959_2018` before using these examples.
+
+AS 3959:2018 migration
+======================
+
+Version 3.0 uses the 2018 Method 1 lookup tables (2.4 to 2.7).
+Verification source: the published `AS 3959:2018 preview at ANSI
+<https://webstore.ansi.org/preview-pages/SAI/preview_00-3262822250-primary.pdf>`_
+(including amendment markers A1/A2). This is a spatial adaptation of
+Method 1, not a replacement for a site BAL assessment.
+
+Input migration
+---------------
+
+Codes 1 through 6 remain Forest, Woodland, Shrubland, Scrub,
+Mallee/Mulga and Rainforest. Code 7 is now Grassland only.
+Code 8 is Tussock Moorland (class H), available only at FDI 50.
+Previously the FDI 50 code 7 lookup used tussock moorland distances.
+Existing combined grassland/moorland datasets must be separated before use.
+Invalid classes and unsupported moorland/FDI combinations raise an error.
+The toolbox's remap parameter can supply the new numerical codes.
+
+Use code 0 for exclusions assessed under clause 2.2.3.2; keep unknown
+or missing vegetation as NoData. The software cannot infer maintenance,
+patch isolation or other exclusion conditions from a class code alone.
+Review vegetation classification against the 2018 Table 2.3, including
+open woodland and grassland descriptions. Obtain FDI for the applicable
+jurisdiction; this update does not infer local planning variations.
+
+Outputs and limitations
+-----------------------
+
+* 0: BAL-LOW contribution from assessed exclusions or distances outside
+  the lookup assessment range.
+* 12.5, 19, 29, 40: the corresponding BAL category.
+* 100: BAL-FZ (a category code, not calculated heat flux).
+* 200: effective downslope above 20 degrees; Method 1 is not applicable.
+* -99: NoData, not BAL-LOW.
+
+Grassland uses a 50 m cutoff for all FDIs; tussock moorland uses 100 m.
+The implementation treats the cutoff itself as outside the assessment range,
+consistent with its previous grassland distance convention. Confirm boundary
+cases against the applicable assessment requirements.
+Distance thresholds between BAL categories are lower-bound inclusive.
+
+The existing eight-direction raster sampling, DEM-derived slope classes,
+cell-centre/edge distance approximation and incomplete boundary coverage
+remain. Effective slope under classified vegetation must be checked for
+its influence on fire behaviour (clause 2.2.5); local DEM pixel slope is
+not automatically the required effective slope. NoData samples are still
+ignored when another valid direction contributes a value, so verify data
+coverage before interpreting any output, particularly BAL-LOW.
+
+The binary BAL.tbx and historical training, figures and PDFs have not been
+regenerated. Their 2009 examples must not be read as 2018 guidance.
+Use this guide for the changed inputs and outputs.
+
+Validation
+----------
+
+Numerical regression tests cover both FDI 50 vegetation types, distance
+boundaries, exclusions and unsupported slopes. ArcGIS 10.2 / Python 2.7
+remains the target. ArcPy raster integration tests require that environment.
+Historical reference rasters need review and regeneration in ArcGIS where
+these changes affect expected outputs; they are not 2018 validation data.

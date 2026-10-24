@@ -14,13 +14,14 @@ area of interest within Australia based on the input vegetation and
 elevation datasets.
 
 The computation algorithm is adapted spatially to Method 1 in the
-Australian Standard AS 3959 (2009)--*Construction of buildings in
+Australian Standard AS 3959:2018--*Construction of buildings in
 bushfire-prone areas*.
 
 .. toctree::
    :maxdepth: 1
    :caption: Contents
 
+   userguide/as3959_2018
    disclaim
    userguide/index
    training/index
